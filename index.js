@@ -10,7 +10,7 @@ let original;
 let flipped;
 
 (async () => {
-  const framesPath = 'frames';
+  const framesPath = 'framesf4';
   const files = await fs.readdir(framesPath);
 
   original = await Promise.all(files.map(async (file) => {
@@ -38,6 +38,12 @@ const colorsOptions = [
   'cyan',
   'white'
 ];
+
+const colorsOptionsW = ['white', 'white', 'white', 'white', 'white', 'white', 'white'];
+
+
+
+
 const numColors = colorsOptions.length;
 const selectColor = previousColor => {
   let color;
@@ -60,8 +66,8 @@ const streamer = (stream, opts) => {
     stream.push('\033[2J\033[3J\033[H');
 
     const newColor = lastColor = selectColor(lastColor);
-
-    stream.push(colors[colorsOptions[newColor]](frames[index]));
+    //para blanco cambiar esta linea y ponerle o quitarle la W
+    stream.push(colors[colorsOptionsW[newColor]](frames[index]));
 
     index = (index + 1) % frames.length;
   }, 80);
