@@ -7,8 +7,10 @@
     "dev": "nodemon index.js"
   },
   "dependencies": {
+    "angular-cli-ghpages": "^2.0.0-beta.2",
     "colors": "1.4.0",
-    "mz": "2.7.0"
+    "mz": "2.7.0",
+    "ng": "^0.0.0"
   },
   "devDependencies": {
     "assemble": "^0.24.3",
