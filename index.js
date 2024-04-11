@@ -10,7 +10,7 @@ let original;
 let flipped;
 
 (async () => {
-  const framesPath = 'frames';
+  const framesPath = 'framesb1';
   const files = await fs.readdir(framesPath);
 
   original = await Promise.all(files.map(async (file) => {
