@@ -10,7 +10,7 @@ let original;
 let flipped;
 
 (async () => {
-  const framesPath = 'framesf4';
+  const framesPath = 'frames';
   const files = await fs.readdir(framesPath);
 
   original = await Promise.all(files.map(async (file) => {
@@ -67,7 +67,7 @@ const streamer = (stream, opts) => {
 
     const newColor = lastColor = selectColor(lastColor);
     //para blanco cambiar esta linea y ponerle o quitarle la W
-    stream.push(colors[colorsOptionsW[newColor]](frames[index]));
+    stream.push(colors[colorsOptions[newColor]](frames[index]));
 
     index = (index + 1) % frames.length;
   }, 80);
@@ -88,7 +88,7 @@ const server = http.createServer((req, res) => {
     req.headers['user-agent'] &&
     !req.headers['user-agent'].includes('curl')
   ) {
-    res.writeHead(302, { Location: 'https://github.com/hugomd/parrot.live' });
+    res.writeHead(302, { Location: 'https://github.com/Aaron3312/CurlParrot_perrito.git' });
     return res.end();
   }
 
