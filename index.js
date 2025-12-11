@@ -58,12 +58,47 @@ const selectColor = previousColor => {
   return color;
 };
 
+// --- simple CLI flag / env parsing for default delay ---
+const parseCliArgs = () => {
+  const args = process.argv.slice(2);
+  const out = {};
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i];
+    if (a === '--delay' || a === '-d') {
+      const next = args[i + 1];
+      if (next && !next.startsWith('-')) {
+        out.delay = Number(next);
+        i++;
+      }
+    } else if (a.startsWith('--delay=')) {
+      out.delay = Number(a.split('=')[1]);
+    }
+  }
+  return out;
+};
+
+const cli = parseCliArgs();
+const DEFAULT_DELAY = (() => {
+  if (cli.delay !== undefined && !Number.isNaN(cli.delay)) return cli.delay;
+  if (process.env.PARROT_DELAY) {
+    const n = Number(process.env.PARROT_DELAY);
+    if (!Number.isNaN(n)) return n;
+  }
+  return undefined;
+})();
+
+if (DEFAULT_DELAY !== undefined) {
+  console.log(`Using default animation delay: ${DEFAULT_DELAY}ms`);
+}
+
 const streamer = (stream, opts) => {
   let index = 0;
   let lastColor;
   const { original, flipped } = opts.frames;
   const frames = opts.flip ? flipped : original;
-  const delay = Number(opts.delay) || 80;
+  const delay = (opts.delay !== undefined && !Number.isNaN(Number(opts.delay)))
+    ? Number(opts.delay)
+    : (DEFAULT_DELAY !== undefined ? DEFAULT_DELAY : 80);
   const useColors = opts.color !== false;
 
   return setInterval(() => {
@@ -127,6 +162,12 @@ const server = http.createServer((req, res) => {
   stream.pipe(res);
 
   const q = validateQuery(url.parse(req.url, true).query);
+  // allow overriding delay via HTTP header so curl can set it with -H "X-Parrot-Delay: 120"
+  const headerDelay = req.headers['x-parrot-delay'] || req.headers['x-delay'];
+  if ((q.delay === undefined || q.delay === null) && headerDelay) {
+    const n = Number(headerDelay);
+    if (!Number.isNaN(n)) q.delay = n;
+  }
   const folderName = q.folder || 'frames';
 
   // get frames (from cache or load)

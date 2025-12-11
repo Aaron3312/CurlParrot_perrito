@@ -59,6 +59,28 @@ También se soporta `delay` en milisegundos (velocidad entre frames):
 curl "http://localhost:3000?folder=sexy&delay=40"
 ```
 
+Además de pasar `delay` por query param, ahora puedes configurar una velocidad por defecto del servidor usando un flag CLI o una variable de entorno:
+
+- CLI: `node index.js --delay 120` o `npm start -- --delay 120` (valor en ms)
+- Env: `PARROT_DELAY=120 node index.js`
+
+La prioridad es: query param `delay` (si está presente) > flag/ENV por defecto > valor por defecto del código (80ms).
+
+Si prefieres enviar la velocidad desde `curl` sin tocar la URL, ahora también aceptamos un header HTTP: `X-Parrot-Delay` (o `X-Delay`).
+
+Ejemplo con header desde `curl`:
+
+```bash
+curl -H "X-Parrot-Delay: 120" "http://localhost:3000?folder=frames"
+```
+
+Esto es útil si quieres usar opciones de cliente (por ejemplo en scripts) sin modificar la query string. El orden de prioridad para la velocidad es:
+
+1. `delay` en la query string (ej. `?delay=40`)
+2. Header `X-Parrot-Delay` / `X-Delay`
+3. Flag CLI `--delay` o variable `PARROT_DELAY`
+4. Valor por defecto en el código (80ms)
+
 Nota: el parámetro `folder` sólo acepta nombres sencillos (letras, números, guión bajo y guión medio). Esto evita rutas que salgan del directorio del proyecto.
 
 ## Query params / Flags HTTP soportadas
