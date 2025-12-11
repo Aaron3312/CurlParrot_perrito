@@ -1,7 +1,5 @@
 # fly.toml app configuration file generated for curlparrot-perrito on 2025-12-11T05:36:43+01:00
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
+# Updated for HTTP direct access (curl jai-vier.online)
 
 app = 'curlparrot-perrito'
 primary_region = 'cdg'
@@ -10,7 +8,7 @@ primary_region = 'cdg'
 
 [http_service]
   internal_port = 3000
-  force_https = true
+  force_https = false    # ← CAMBIO: Sin redirección HTTPS
   auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0

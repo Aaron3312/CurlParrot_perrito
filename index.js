@@ -64,16 +64,28 @@ const streamer = (stream, opts) => {
   const { original, flipped } = opts.frames;
   const frames = opts.flip ? flipped : original;
   const delay = Number(opts.delay) || 80;
+  const useColors = opts.color !== false;
 
   return setInterval(() => {
   // clear the screen
   stream.push('\x1b[2J\x1b[3J\x1b[H');
 
-    const newColor = lastColor = selectColor(lastColor);
-    stream.push(colors[colorsOptions[newColor]](frames[index]));
+    if (useColors) {
+      const newColor = lastColor = selectColor(lastColor);
+      stream.push(colors[colorsOptions[newColor]](frames[index]));
+    } else {
+      stream.push(frames[index]);
+    }
 
     index = (index + 1) % frames.length;
   }, delay);
+};
+
+// decide whether to use colors based on query param
+const shouldUseColors = (colorParam) => {
+  if (colorParam === undefined || colorParam === null) return true;
+  const s = String(colorParam).toLowerCase();
+  return !(s === 'false' || s === '0' || s === 'no' || s === 'off');
 };
 
 const validateQuery = (query) => {
@@ -90,8 +102,9 @@ const validateQuery = (query) => {
   }
 
   const delay = query.delay ? Number(query.delay) : undefined;
+  const color = shouldUseColors(query.color);
 
-  return { flip, folder, delay };
+  return { flip, folder, delay, color };
 };
 
 const server = http.createServer((req, res) => {
@@ -134,7 +147,7 @@ const server = http.createServer((req, res) => {
         framesCache.set(folderName, framesObj);
       }
 
-      const interval = streamer(stream, { flip: q.flip, frames: framesObj, delay: q.delay });
+  const interval = streamer(stream, { flip: q.flip, frames: framesObj, delay: q.delay, color: q.color });
 
       req.on('close', () => {
         stream.destroy();
