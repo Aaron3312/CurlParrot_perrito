@@ -1,6 +1,4 @@
 Genere una nueva parte para esto que hace uno con un borrego y un perrito
-
-
 curl 34.16.150.55:3000
 
 
